@@ -1,0 +1,349 @@
+{
+  "format": "whiteboard-folder-project/v1",
+  "projectName": "sample-whiteboard-3-scenes",
+  "srt": "story.srt",
+  "script": "script.txt",
+  "output": {
+    "width": 1280,
+    "height": 720,
+    "fps": 30,
+    "holdMs": 650,
+    "paperColor": "#f5ebd7",
+    "burnSubtitles": true
+  },
+  "scenes": [
+    {
+      "id": "scene-01",
+      "title": "대본에서 SRT 만들기",
+      "cueIds": [
+        1,
+        2
+      ],
+      "image": "images/scene-01.svg",
+      "prompt": "16:9 educational whiteboard illustration on warm cream paper. Left: a clean script document with three short black lines. Center: a bold hand-drawn arrow. Right: three stacked subtitle cards with tiny timing marks, no readable labels. Black ink line art with muted green and terracotta accents. Large separated semantic objects, generous negative space, consistent line weight.",
+      "elements": [
+        {
+          "id": "element-1",
+          "label": "원본 대본",
+          "sequence": 1,
+          "narrativeRole": "input",
+          "subtitle": "AI 화이트보드 영상 제작은 세 단계로 생각하면 쉽습니다.",
+          "type": "illustration",
+          "region": {
+            "x": 70,
+            "y": 120,
+            "width": 360,
+            "height": 470
+          },
+          "reveal": {
+            "direction": "left_to_right",
+            "startMs": 0,
+            "durationMs": 2400,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              70,
+              355
+            ],
+            "end": [
+              430,
+              355
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        },
+        {
+          "id": "element-2",
+          "label": "변환 흐름",
+          "sequence": 2,
+          "narrativeRole": "process",
+          "subtitle": "먼저 원본 대본을 읽기 좋은 SRT 자막으로 나눕니다.",
+          "type": "illustration",
+          "region": {
+            "x": 450,
+            "y": 260,
+            "width": 280,
+            "height": 190
+          },
+          "reveal": {
+            "direction": "center_out",
+            "startMs": 2500,
+            "durationMs": 1700,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              450,
+              355
+            ],
+            "end": [
+              730,
+              355
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        },
+        {
+          "id": "element-3",
+          "label": "SRT 자막 블록",
+          "sequence": 3,
+          "narrativeRole": "output",
+          "subtitle": "먼저 원본 대본을 읽기 좋은 SRT 자막으로 나눕니다.",
+          "type": "illustration",
+          "region": {
+            "x": 750,
+            "y": 110,
+            "width": 455,
+            "height": 500
+          },
+          "reveal": {
+            "direction": "top_to_bottom",
+            "startMs": 4200,
+            "durationMs": 3200,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              750,
+              360
+            ],
+            "end": [
+              1205,
+              360
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        }
+      ]
+    },
+    {
+      "id": "scene-02",
+      "title": "장면과 프롬프트 만들기",
+      "cueIds": [
+        3,
+        4
+      ],
+      "image": "images/scene-02.svg",
+      "prompt": "16:9 educational whiteboard diagram on warm cream paper. Show three subtitle strips flowing into three larger storyboard frames, then into one prompt card with a simple sparkle symbol. Clean black hand-drawn ink, muted green and terracotta accents, no tiny decorative text, clear spacing between groups for reveal animation.",
+      "elements": [
+        {
+          "id": "element-1",
+          "label": "SRT 묶음",
+          "sequence": 1,
+          "narrativeRole": "input",
+          "subtitle": "다음으로 자막을 의미가 이어지는 장면 단위로 묶습니다.",
+          "type": "illustration",
+          "region": {
+            "x": 45,
+            "y": 115,
+            "width": 340,
+            "height": 500
+          },
+          "reveal": {
+            "direction": "top_to_bottom",
+            "startMs": 0,
+            "durationMs": 2200,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              45,
+              365
+            ],
+            "end": [
+              385,
+              365
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        },
+        {
+          "id": "element-2",
+          "label": "스토리보드 장면",
+          "sequence": 2,
+          "narrativeRole": "scene-group",
+          "subtitle": "다음으로 자막을 의미가 이어지는 장면 단위로 묶습니다.",
+          "type": "illustration",
+          "region": {
+            "x": 475,
+            "y": 90,
+            "width": 330,
+            "height": 545
+          },
+          "reveal": {
+            "direction": "top_to_bottom",
+            "startMs": 2100,
+            "durationMs": 2800,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              475,
+              362
+            ],
+            "end": [
+              805,
+              362
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        },
+        {
+          "id": "element-3",
+          "label": "이미지 프롬프트",
+          "sequence": 3,
+          "narrativeRole": "prompt",
+          "subtitle": "각 장면의 핵심 화면을 설명하는 이미지 프롬프트를 만듭니다.",
+          "type": "illustration",
+          "region": {
+            "x": 925,
+            "y": 130,
+            "width": 310,
+            "height": 420
+          },
+          "reveal": {
+            "direction": "center_out",
+            "startMs": 4800,
+            "durationMs": 2600,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              925,
+              340
+            ],
+            "end": [
+              1235,
+              340
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        }
+      ]
+    },
+    {
+      "id": "scene-03",
+      "title": "이미지에서 플레이와 내보내기",
+      "cueIds": [
+        5,
+        6
+      ],
+      "image": "images/scene-03.svg",
+      "prompt": "16:9 educational whiteboard illustration. Left: an AI image frame with a simple landscape icon. Center: a pen/reveal mask sweeping across a scene. Right: a play button and two export document icons. Warm cream paper, black hand-drawn ink, restrained green and terracotta accents, clearly separated objects for sequential reveal, no captions.",
+      "elements": [
+        {
+          "id": "element-1",
+          "label": "장면 이미지",
+          "sequence": 1,
+          "narrativeRole": "image",
+          "subtitle": "AI나 직접 만든 이미지를 연결하고 중요한 영역을 순서대로 나타냅니다.",
+          "type": "illustration",
+          "region": {
+            "x": 45,
+            "y": 140,
+            "width": 405,
+            "height": 405
+          },
+          "reveal": {
+            "direction": "left_to_right",
+            "startMs": 0,
+            "durationMs": 2200,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              45,
+              342
+            ],
+            "end": [
+              450,
+              342
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        },
+        {
+          "id": "element-2",
+          "label": "Reveal 애니메이션",
+          "sequence": 2,
+          "narrativeRole": "animation",
+          "subtitle": "AI나 직접 만든 이미지를 연결하고 중요한 영역을 순서대로 나타냅니다.",
+          "type": "illustration",
+          "region": {
+            "x": 620,
+            "y": 120,
+            "width": 320,
+            "height": 440
+          },
+          "reveal": {
+            "direction": "bottom_to_top",
+            "startMs": 2200,
+            "durationMs": 2700,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              620,
+              340
+            ],
+            "end": [
+              940,
+              340
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        },
+        {
+          "id": "element-3",
+          "label": "플레이 및 내보내기",
+          "sequence": 3,
+          "narrativeRole": "export",
+          "subtitle": "전체 재생을 확인한 뒤 영상이나 HyperFrames HTML로 내보냅니다.",
+          "type": "illustration",
+          "region": {
+            "x": 995,
+            "y": 150,
+            "width": 235,
+            "height": 390
+          },
+          "reveal": {
+            "direction": "center_out",
+            "startMs": 4900,
+            "durationMs": 2400,
+            "maskPaddingPx": 8,
+            "protectedRegions": []
+          },
+          "handPath": {
+            "start": [
+              995,
+              345
+            ],
+            "end": [
+              1230,
+              345
+            ],
+            "easing": "easeInOut"
+          },
+          "colorPhase": 72
+        }
+      ]
+    }
+  ]
+}

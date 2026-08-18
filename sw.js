@@ -1,0 +1,5 @@
+const CACHE='wai-motion-v4-__BUILD_TIME__';
+const SHELL=['./','./index.html','./styles.css','./app.js','./project-bundle.js','./exporters.js','./enhancements.js','./site-config.js','./manifest.webmanifest','./assets/icons/favicon.svg','./sample-project/project.json','./sample-project/story.srt','./sample-project/images/scene-01.svg','./sample-project/images/scene-02.svg','./sample-project/images/scene-03.svg'];
+self.addEventListener('install',e=>e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())));
+self.addEventListener('activate',e=>e.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('wai-motion-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim())));
+self.addEventListener('fetch',e=>{if(e.request.method!=='GET')return;const u=new URL(e.request.url);if(u.origin!==location.origin)return;e.respondWith(caches.match(e.request).then(cached=>cached||fetch(e.request).then(r=>{const clone=r.clone();caches.open(CACHE).then(c=>c.put(e.request,clone));return r}).catch(()=>cached)))})

@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#f5ebd7" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="description" content="SRT 생성부터 AI 장면 프롬프트, 이미지 생성, 화이트보드 애니메이션 플레이까지 연결하는 GitHub Pages 웹앱" />
+  <title>Whiteboard AI Motion Studio</title>
+  <link rel="canonical" href="__SITE_URL__" />
+  <meta property="og:title" content="Whiteboard AI Motion Studio" />
+  <meta property="og:description" content="대본에서 SRT, AI 장면 이미지, 화이트보드 애니메이션과 영상 내보내기까지 한 번에." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="__SITE_URL__" />
+  <meta property="og:image" content="__SITE_URL__assets/og-image.png" />
+  <meta property="og:site_name" content="Whiteboard AI Motion Studio" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Whiteboard AI Motion Studio" />
+  <meta name="twitter:description" content="대본 → SRT → 장면 → AI 이미지 → 애니메이션 → 플레이" />
+  <meta name="twitter:image" content="__SITE_URL__assets/og-image.png" />
+  <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./assets/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Whiteboard AI Motion Studio","applicationCategory":"MultimediaApplication","operatingSystem":"Web","description":"대본에서 SRT, AI 장면 프롬프트, 이미지, 화이트보드 애니메이션과 영상 내보내기까지 연결하는 브라우저 제작 도구.","url":"__SITE_URL__"}</script>
+</head>
+<body>
+<a class="skip-link" href="#mainContent">본문으로 건너뛰기</a>
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark">W</div>
+    <div><h1>Whiteboard AI Motion Studio</h1><p>대본 → SRT → 장면 → AI 이미지 → 애니메이션 → 플레이</p></div>
+  </div>
+  <div class="top-actions">
+    <span id="autosaveStatus" class="status-dot neutral" title="프로젝트 자동 저장 상태">자동저장 준비</span>
+    <span id="gatewayStatus" class="status-dot off">Gateway 미연결</span>
+    <button id="loadDemoBtn" class="btn soft" title="내장 예제 프로젝트를 불러옵니다">예제 불러오기</button>
+    <button id="newProjectBtn" class="btn ghost" title="현재 프로젝트를 비우고 새로 시작합니다">새 프로젝트</button>
+    <label class="btn soft">JSON 불러오기<input id="projectFile" type="file" accept=".json,application/json" hidden></label>
+    <button id="exportProjectBtn" class="btn soft">JSON 저장</button>
+    <button id="exportHFBtn" class="btn">HyperFrames HTML</button>
+    <label class="theme-control" title="화면 테마"><span class="sr-only">화면 테마</span><select id="themeSelect" aria-label="화면 테마"><option value="system">시스템</option><option value="light">라이트</option><option value="dark">다크</option></select></label>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="주요 기능">
+  <button class="tab active" data-tab="studio">제작 스튜디오</button>
+  <button class="tab" data-tab="srt">SRT 만들기</button>
+  <button class="tab" data-tab="prompt">AI 장면 프롬프트</button>
+  <button class="tab" data-tab="api">API 연결</button>
+  <button class="tab" data-tab="guide">처음부터 끝까지</button>
+  <button class="tab" data-tab="examples">예제 / 폴더 구조</button>
+</nav>
+
+<main id="mainContent">
+<section id="tab-studio" class="tabview active">
+  <div class="studio-layout">
+    <aside class="panel source-panel">
+      <section class="bundle-section">
+        <div class="section-head"><h2>1. 프로젝트 폴더</h2><button id="loadSampleFolderBtn" class="text-btn">3장면 예제 열기</button></div>
+        <label class="file-drop bundle-drop"><strong>폴더 통째로 불러오기</strong><span>SRT + 이미지 + project.json을 한 번에 연결</span><input id="projectFolderInput" type="file" webkitdirectory directory multiple hidden></label>
+        <div id="bundleSummary" class="hint-box">권장 구조: <b>project.json + story.srt + images/</b></div>
+        <div class="button-row compact-row"><button id="autoMapImagesBtn" class="btn soft small">이미지 자동 연결</button><button id="clearBundleBtn" class="btn ghost small">폴더 연결 지우기</button></div>
+      </section>
+      <section>
+        <div class="section-head"><h2>2. SRT / 장면 생성</h2><button class="text-btn" data-go="srt">SRT 만들기 →</button></div>
+        <label class="file-drop"><strong>SRT 파일 선택</strong><span>또는 아래에 붙여넣기</span><input id="srtFile" type="file" accept=".srt,text/plain" hidden></label>
+        <textarea id="srtInput" rows="9" placeholder="1&#10;00:00:00,000 --> 00:00:04,000&#10;첫 번째 문장..."></textarea>
+        <div class="grid2">
+          <label>목표 장면(초)<input id="targetSec" type="number" min="5" max="120" value="25"></label>
+          <label>장면 여유(초)<input id="sceneGap" type="number" min="0" max="20" value="5"></label>
+        </div>
+        <button id="parseBtn" class="btn wide">SRT 분석 → 장면 생성</button>
+      </section>
+      <section>
+        <div class="section-head"><h2>3. 장면 연결</h2><button id="addSceneBtn" class="icon-btn" title="빈 장면 추가">＋</button></div>
+        <div id="sceneList" class="scene-list"></div><div id="bundleMappingList" class="mapping-list" aria-label="SRT 장면과 이미지 연결"></div>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <div class="toolbar">
+        <label class="btn soft small">장면 이미지<input id="imageFile" type="file" accept="image/*" hidden></label>
+        <button id="openPromptBtn" class="btn soft small">AI 이미지 만들기</button>
+        <button id="addRegionBtn" class="btn soft small">영역 그리기</button>
+        <button id="fullRegionBtn" class="btn ghost small">전체 영역 요소</button>
+        <span class="spacer"></span>
+        <button id="playBtn" class="btn small">▶ 장면</button>
+        <button id="playProjectBtn" class="btn small">▶ 전체</button>
+        <button id="stopBtn" class="btn ghost small">■ 정지</button>
+        <button id="openExportDialogBtn" class="btn danger small">내보내기 ▾</button>
+      </div>
+      <div id="sceneLinkStrip" class="scene-link-strip" aria-label="장면 연결 요약"></div>
+      <div class="stage-wrap">
+        <canvas id="stage" width="1280" height="720"></canvas>
+        <div id="emptyHint" class="empty-hint"><strong>장면 이미지를 추가하세요</strong><span>AI 생성 또는 파일 업로드 후 바로 재생할 수 있습니다.</span></div>
+      </div>
+      <div class="timeline">
+        <input id="scrubber" type="range" min="0" max="1000" value="0">
+        <div class="timeline-meta"><span id="timeLabel">0.00 / 0.00s</span><span id="subtitleNow"></span></div>
+      </div>
+    </section>
+
+    <aside class="panel inspector">
+      <section>
+        <div class="section-head"><h2>3. 애니메이션 요소</h2><div><button id="moveUpBtn" class="icon-btn">↑</button><button id="moveDownBtn" class="icon-btn">↓</button><button id="deleteElementBtn" class="icon-btn danger-text">×</button></div></div>
+        <div id="elementList" class="element-list"></div>
+      </section>
+      <section id="elementInspector" class="hidden">
+        <h2>요소 설정</h2>
+        <label>이름<input id="elLabel" type="text"></label>
+        <label>역할<input id="elRole" type="text" placeholder="핵심 개념 / 인물 / 결과"></label>
+        <label>연결 자막<select id="elSubtitle"></select></label>
+        <div class="grid2"><label>시작(ms)<input id="elStart" type="number" min="0" step="100"></label><label>지속(ms)<input id="elDuration" type="number" min="100" step="100"></label></div>
+        <label>Reveal 방향<select id="elDirection"><option value="left_to_right">왼쪽 → 오른쪽</option><option value="right_to_left">오른쪽 → 왼쪽</option><option value="top_to_bottom">위 → 아래</option><option value="bottom_to_top">아래 → 위</option><option value="center_out">중앙 → 바깥</option></select></label>
+        <div class="grid2"><label>마스크 여백<input id="elPadding" type="number" min="0" max="100" value="12"></label><label>컬러 전환(%)<input id="elColorPhase" type="number" min="0" max="100" value="72"></label></div>
+        <button id="exportAnnotationBtn" class="btn soft wide">annotation.json 저장</button>
+      </section>
+      <section>
+        <h2>출력 설정</h2>
+        <div class="grid2"><label>가로<input id="outWidth" type="number" min="320" max="3840" value="1280"></label><label>세로<input id="outHeight" type="number" min="240" max="2160" value="720"></label></div>
+        <div class="grid2"><label>FPS<input id="fps" type="number" min="12" max="60" value="30"></label><label>끝 정지(ms)<input id="holdMs" type="number" min="0" max="5000" value="700"></label></div>
+        <label>종이 배경<input id="paperColor" type="color" value="#f5ebd7"></label>
+        <label class="check"><input id="burnSubtitles" type="checkbox" checked> 영상 캔버스에 자막 표시</label>
+        <label class="check"><input id="autoFullElement" type="checkbox" checked> 새 이미지에 전체 영역 요소 자동 생성</label>
+      </section>
+    </aside>
+  </div>
+</section>
+
+<section id="tab-srt" class="tabview page-view">
+  <div class="page-head"><div><h2>SRT 만들기</h2><p>파일을 미리 만들 필요 없이, 이 탭에서 대본·AI·음성/영상으로 SRT를 만든 뒤 바로 스튜디오로 보냅니다.</p></div><button id="applySrtToStudioBtn" class="btn">스튜디오에 적용 →</button></div>
+  <div class="step-grid">
+    <article class="card span2">
+      <div class="card-title"><span class="num">1</span><div><h3>대본 또는 원문 입력</h3><p>기사, 강의 대본, 설명문, 내레이션 등</p></div></div>
+      <textarea id="scriptInput" rows="10" placeholder="여기에 영상에서 읽을 대본을 입력하세요. 문장부호와 줄바꿈을 기준으로 자동 분할할 수 있습니다."></textarea>
+      <div class="setting-row four">
+        <label>한 자막 최대 글자<input id="captionChars" type="number" value="28" min="8" max="80"></label>
+        <label>최소 표시(초)<input id="captionMinSec" type="number" value="1.3" min="0.5" max="10" step="0.1"></label>
+        <label>최대 표시(초)<input id="captionMaxSec" type="number" value="4.5" min="1" max="15" step="0.1"></label>
+        <label>읽기 속도(글자/초)<input id="charsPerSec" type="number" value="7.5" min="2" max="20" step="0.5"></label>
+      </div>
+      <div class="button-row"><button id="localSrtBtn" class="btn">브라우저에서 SRT 생성</button><button id="makeSrtPromptBtn" class="btn soft">AI용 SRT 프롬프트 만들기</button><button id="aiSrtBtn" class="btn soft">연결된 AI로 SRT 생성</button></div>
+    </article>
+
+    <article class="card">
+      <div class="card-title"><span class="num">2A</span><div><h3>외부 AI에서 만들기</h3><p>API가 없어도 프롬프트 복사 → 결과 붙여넣기</p></div></div>
+      <label>AI 선택<select id="externalAiSelect"><option value="chatgpt">ChatGPT</option><option value="gemini">Gemini</option><option value="claude">Claude</option><option value="grok">Grok</option></select></label>
+      <textarea id="srtPromptOutput" rows="9" placeholder="‘AI용 SRT 프롬프트 만들기’를 누르면 여기에 생성됩니다."></textarea>
+      <div class="button-row"><button id="copySrtPromptBtn" class="btn soft">프롬프트 복사</button><button id="openExternalAiBtn" class="btn ghost">AI 웹 열기 ↗</button></div>
+      <label>AI 결과 붙여넣기<textarea id="externalSrtResult" rows="6" placeholder="AI가 반환한 SRT를 붙여넣으세요."></textarea></label>
+      <button id="useExternalSrtBtn" class="btn wide">결과를 SRT 편집기에 넣기</button>
+    </article>
+
+    <article class="card">
+      <div class="card-title"><span class="num">2B</span><div><h3>음성/영상 → SRT</h3><p>Gateway + OpenAI 전사 API 사용</p></div></div>
+      <label class="file-drop compact"><strong>음성/영상 파일 선택</strong><span>mp3, wav, m4a, mp4, webm 등</span><input id="mediaForTranscription" type="file" accept="audio/*,video/*" hidden></label>
+      <div id="mediaInfo" class="hint-box">파일을 선택하면 길이를 확인합니다.</div>
+      <label>전사 모델<input id="transcribeModel" type="text" value="whisper-1"></label>
+      <label>언어<input id="transcribeLanguage" type="text" value="ko" placeholder="ko, en, ja ..."></label>
+      <button id="transcribeBtn" class="btn wide">전사 API로 SRT 만들기</button>
+      <p class="micro">`whisper-1`은 SRT 형식 자체를 받을 수 있습니다. 최신 GPT 전사 모델을 쓰면 텍스트를 받은 뒤 이 앱이 자동 타이밍으로 SRT를 만듭니다.</p>
+    </article>
+
+    <article class="card span2">
+      <div class="card-title"><span class="num">3</span><div><h3>SRT 편집·검사</h3><p>번호, 시간 순서, 겹침, 너무 짧은 자막을 검사합니다.</p></div></div>
+      <textarea id="srtBuilderOutput" rows="16" class="codearea"></textarea>
+      <div id="srtValidation" class="validation neutral">아직 검사하지 않았습니다.</div>
+      <div class="button-row"><button id="validateSrtBtn" class="btn soft">SRT 검사</button><button id="normalizeSrtBtn" class="btn soft">번호/시간 형식 정리</button><button id="downloadSrtBtn" class="btn ghost">.srt 다운로드</button><button id="builderToStudioBtn" class="btn">장면 생성까지 진행 →</button></div>
+    </article>
+  </div>
+</section>
+
+<section id="tab-prompt" class="tabview page-view">
+  <div class="page-head"><div><h2>AI 장면 프롬프트</h2><p>SRT 장면마다 일관된 화면 제작 프롬프트를 만들고, 외부 AI 또는 API 이미지 생성 결과를 즉시 장면에 넣습니다.</p></div><button id="prepareAllPromptsBtn" class="btn soft">모든 장면 프롬프트 준비</button></div>
+  <div class="prompt-layout">
+    <aside class="card prompt-scenes"><h3>장면 선택</h3><div id="promptSceneList" class="scene-list"></div></aside>
+    <div class="prompt-main">
+      <article class="card">
+        <div class="setting-row three">
+          <label>프리셋<select id="promptPreset"><option value="whiteboard">화이트보드 교육</option><option value="infographic">인포그래픽</option><option value="story">스토리 일러스트</option><option value="technical">기술 다이어그램</option><option value="product">제품 설명</option></select></label>
+          <label>화면 비율<select id="promptAspect"><option>16:9</option><option>9:16</option><option>1:1</option><option>4:3</option></select></label>
+          <label>화면 내 글자<select id="promptTextPolicy"><option value="none">텍스트 넣지 않기</option><option value="minimal">핵심 단어만</option><option value="allowed">필요하면 허용</option></select></label>
+        </div>
+        <label>전 장면 공통 스타일/캐릭터 고정 메모<textarea id="styleAnchor" rows="4" placeholder="예: 동일한 30대 여성 캐릭터, 네이비 셔츠, 둥근 안경. 따뜻한 크림 종이, 검은 펜선, 포인트색 2개만 사용."></textarea></label>
+        <label>현재 장면 내용<textarea id="sceneNarrative" rows="5"></textarea></label>
+        <label>생성 프롬프트<textarea id="scenePromptOutput" rows="12"></textarea></label>
+        <div class="button-row"><button id="generatePromptBtn" class="btn">프롬프트 생성</button><button id="refinePromptBtn" class="btn soft">AI로 프롬프트 개선</button><button id="copyScenePromptBtn" class="btn soft">복사</button><button id="openImageAiBtn" class="btn ghost">외부 AI 웹 열기 ↗</button></div>
+      </article>
+      <article class="card image-generation-card">
+        <div class="card-title"><span class="num">AI</span><div><h3>API 이미지 생성</h3><p>OpenAI / Gemini / xAI는 Gateway를 통해 이미지 생성 후 현재 장면에 바로 연결합니다. Claude는 텍스트 프롬프트 개선용입니다.</p></div></div>
+        <div class="setting-row three"><label>이미지 제공자<select id="imageProvider"><option value="openai">OpenAI</option><option value="gemini">Gemini</option><option value="xai">xAI / Grok</option></select></label><label>모델<input id="imageModel" type="text"></label><label>크기<input id="imageSize" type="text" value="1536x1024"></label></div>
+        <div class="button-row"><button id="generateImageBtn" class="btn">현재 프롬프트로 이미지 생성</button><label class="btn soft">외부 생성 이미지 불러오기<input id="promptImageFile" type="file" accept="image/*" hidden></label></div>
+        <div id="imageJobStatus" class="validation neutral">이미지 생성 대기</div>
+        <div class="generated-preview"><img id="generatedImagePreview" alt="생성 이미지 미리보기"><div id="generatedPlaceholder">생성된 이미지가 여기에 표시됩니다.</div></div>
+        <button id="applyGeneratedImageBtn" class="btn wide" disabled>현재 장면 이미지로 적용 → 플레이 가능</button>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="tab-api" class="tabview page-view">
+  <div class="page-head"><div><h2>API 연결</h2><p>GitHub Pages에는 비밀 API 키를 넣지 않습니다. 키는 Cloudflare Worker 같은 Gateway의 Secret으로 보관합니다.</p></div><button id="checkGatewayBtn" class="btn">Gateway 상태 확인</button></div>
+  <div class="api-grid">
+    <article class="card span2">
+      <h3>AI Gateway</h3>
+      <div class="setting-row two"><label>Gateway URL<input id="gatewayUrl" type="url" placeholder="https://whiteboard-ai-gateway.example.workers.dev"></label><label>Gateway Access Token<input id="gatewayToken" type="password" placeholder="브라우저 세션에만 보관"></label></div>
+      <div class="button-row"><button id="saveGatewayBtn" class="btn">연결 설정 저장</button><button id="clearGatewayTokenBtn" class="btn ghost">세션 토큰 지우기</button></div>
+      <div class="security-note"><strong>보안 원칙</strong><span>OpenAI/Gemini/Anthropic/xAI 실제 API 키는 HTML·JavaScript·Git 저장소에 넣지 않습니다. 이 앱은 Gateway 주소와 접근 토큰만 사용합니다.</span></div>
+    </article>
+
+    <article class="provider-card card" data-provider="openai"><div class="provider-head"><div><strong>OpenAI / ChatGPT 계열</strong><span>SRT · 프롬프트 · 이미지 · 전사</span></div><span class="cap">TEXT · IMAGE · STT</span></div><label>텍스트 모델<input id="model-openai-text" value="gpt-5.6"></label><label>이미지 모델<input id="model-openai-image" value="gpt-image-2"></label><div class="button-row"><button class="btn soft provider-test" data-provider="openai">텍스트 API 테스트</button><button class="btn ghost refresh-models" data-provider="openai" type="button">모델 목록 새로고침</button></div><div id="models-openai" class="provider-model-list">Gateway 연결 후 실제 사용 가능 모델을 조회할 수 있습니다.</div><div id="test-openai" class="provider-result"></div></article>
+    <article class="provider-card card" data-provider="gemini"><div class="provider-head"><div><strong>Google Gemini</strong><span>SRT · 프롬프트 · 이미지</span></div><span class="cap">TEXT · IMAGE</span></div><label>텍스트 모델<input id="model-gemini-text" value="gemini-3.6-flash"></label><label>이미지 모델<input id="model-gemini-image" value="gemini-3.1-flash-image"></label><div class="button-row"><button class="btn soft provider-test" data-provider="gemini">텍스트 API 테스트</button><button class="btn ghost refresh-models" data-provider="gemini" type="button">모델 목록 새로고침</button></div><div id="models-gemini" class="provider-model-list">Gateway 연결 후 실제 사용 가능 모델을 조회할 수 있습니다.</div><div id="test-gemini" class="provider-result"></div></article>
+    <article class="provider-card card" data-provider="anthropic"><div class="provider-head"><div><strong>Anthropic Claude</strong><span>SRT · 프롬프트 텍스트</span></div><span class="cap">TEXT · VISION INPUT</span></div><label>텍스트 모델<input id="model-anthropic-text" value="claude-sonnet-5"></label><label>이미지 생성<input value="직접 이미지 생성 어댑터 없음" disabled></label><div class="button-row"><button class="btn soft provider-test" data-provider="anthropic">텍스트 API 테스트</button><button class="btn ghost refresh-models" data-provider="anthropic" type="button">모델 목록 새로고침</button></div><div id="models-anthropic" class="provider-model-list">Gateway 연결 후 실제 사용 가능 모델을 조회할 수 있습니다.</div><div id="test-anthropic" class="provider-result"></div></article>
+    <article class="provider-card card" data-provider="xai"><div class="provider-head"><div><strong>xAI / Grok</strong><span>SRT · 프롬프트 · 이미지</span></div><span class="cap">TEXT · IMAGE</span></div><label>텍스트 모델<input id="model-xai-text" value="grok-4.5"></label><label>이미지 모델<input id="model-xai-image" value="grok-imagine-image-quality"></label><div class="button-row"><button class="btn soft provider-test" data-provider="xai">텍스트 API 테스트</button><button class="btn ghost refresh-models" data-provider="xai" type="button">모델 목록 새로고침</button></div><div id="models-xai" class="provider-model-list">Gateway 연결 후 실제 사용 가능 모델을 조회할 수 있습니다.</div><div id="test-xai" class="provider-result"></div></article>
+
+    <article class="card span2">
+      <h3>Claude Code는 어디에 쓰나?</h3>
+      <p class="bodycopy">Claude Code는 브라우저에서 직접 호출할 영상 생성 API가 아니라 개발 환경에서 저장소를 읽고 수정하는 코딩 에이전트입니다. 이 웹서비스 안의 “Claude 연결”은 Anthropic Claude API를 사용하고, Claude Code는 이 프로젝트 기능 추가·버그 수정·Git 커밋 같은 개발 작업에 사용하면 됩니다.</p>
+    </article>
+  </div>
+</section>
+
+<section id="tab-guide" class="tabview page-view">
+  <div class="page-head"><div><h2>처음부터 플레이까지</h2><p>권장 제작 순서입니다. API 없이도 전 과정의 대부분을 사용할 수 있고, Gateway를 연결하면 자동화 범위가 넓어집니다.</p></div></div>
+  <div class="flow">
+    <article><b>01</b><h3>대본 준비</h3><p>내레이션 원문을 SRT 탭에 입력합니다.</p></article>
+    <article><b>02</b><h3>SRT 생성</h3><p>로컬 자동 타이밍, 외부 AI, 연결 API, 음성 전사 중 하나를 선택합니다.</p></article>
+    <article><b>03</b><h3>장면 분할</h3><p>SRT를 20~30초 정도의 의미 단위 장면으로 나눕니다.</p></article>
+    <article><b>04</b><h3>화면 프롬프트</h3><p>각 장면의 자막에서 16:9 일러스트 제작 프롬프트를 만듭니다.</p></article>
+    <article><b>05</b><h3>이미지 생성</h3><p>외부 AI 웹 또는 OpenAI/Gemini/xAI API로 이미지를 생성합니다.</p></article>
+    <article><b>06</b><h3>Reveal 요소</h3><p>전체 영역 자동 요소로 즉시 재생하거나 세부 영역을 직접 지정합니다.</p></article>
+    <article><b>07</b><h3>플레이</h3><p>장면 또는 전체 프로젝트를 연속 재생해 타이밍을 검토합니다.</p></article>
+    <article><b>08</b><h3>내보내기</h3><p>WebM, Animated SVG, GIF, annotation.json, 프로젝트 JSON, HyperFrames HTML을 저장합니다.</p></article>
+  </div>
+  <div class="guide-grid">
+    <article class="card"><h3>화이트보드 프롬프트 예시</h3><pre>16:9 educational whiteboard illustration on warm cream paper. Clean black hand-drawn ink lines, restrained flat accent colors, one clear focal subject, generous negative space, no decorative clutter, no captions or labels. Show the concept visually so individual regions can be revealed in narration order. Consistent character design and line weight across scenes.</pre></article>
+    <article class="card"><h3>인포그래픽 프롬프트 예시</h3><pre>Create a clean 16:9 explanatory infographic with one dominant visual hierarchy. Use 3–5 large semantic groups, simple arrows only when relationships need them, high contrast, minimal text, consistent icon language, and enough spacing that each group can be animated separately.</pre></article>
+    <article class="card"><h3>API 없이 작업</h3><p class="bodycopy">SRT 프롬프트와 장면 프롬프트를 복사해서 ChatGPT, Gemini, Claude, Grok 웹에서 실행한 뒤 결과를 다시 붙여넣으면 됩니다. 이미지도 외부 웹에서 생성한 파일을 “외부 생성 이미지 불러오기”로 넣으면 이후 플레이 과정은 동일합니다.</p></article>
+    <article class="card"><h3>API를 연결하면</h3><p class="bodycopy">SRT 정리, 프롬프트 개선, 이미지 생성, OpenAI 음성 전사를 웹 안에서 실행할 수 있습니다. 키는 Worker Secret에만 두고 Pages에는 저장하지 않습니다.</p></article>
+  </div>
+</section>
+
+<section id="tab-examples" class="tabview page-view">
+  <div class="page-head">
+    <div><h2>예제 프로젝트 폴더</h2><p>자료를 따로따로 찾지 않아도 됩니다. 하나의 폴더 안에서 SRT와 3개 장면 이미지, 연결 정보가 어떻게 묶이는지 그대로 확인할 수 있습니다.</p></div>
+    <div class="button-row"><button id="loadDemoFromExamplesBtn" class="btn">이 폴더를 앱에 그대로 열기</button><button id="refreshProjectJsonBtn" class="btn soft">현재 JSON 새로고침</button></div>
+  </div>
+  <div class="example-grid">
+    <article class="card example-hero">
+      <div class="section-head"><div><h3>sample-project/ — 그대로 복사해서 내 프로젝트로 사용</h3><p class="micro">파일명만 바꾸기보다 <b>project.json</b>의 scenes[].image를 수정하면 연결 관계가 명확합니다.</p></div><a class="btn ghost small" href="./sample-project/README.md" target="_blank" rel="noopener">폴더 설명 열기</a></div>
+      <pre class="folder-tree">sample-project/
+├─ project.json        ← 장면 ↔ SRT ↔ 이미지 연결표
+├─ story.srt           ← 전체 자막
+├─ script.txt          ← 원본 대본(선택)
+└─ images/
+   ├─ scene-01.svg     ← 장면 1
+   ├─ scene-02.svg     ← 장면 2
+   └─ scene-03.svg     ← 장면 3</pre>
+      <div class="scene-thumbs">
+        <a href="./sample-project/images/scene-01.svg" target="_blank" rel="noopener"><img src="./sample-project/images/scene-01.svg" alt="예제 장면 1" loading="lazy"><span><b>01</b> SRT 생성</span></a>
+        <a href="./sample-project/images/scene-02.svg" target="_blank" rel="noopener"><img src="./sample-project/images/scene-02.svg" alt="예제 장면 2" loading="lazy"><span><b>02</b> 장면/프롬프트</span></a>
+        <a href="./sample-project/images/scene-03.svg" target="_blank" rel="noopener"><img src="./sample-project/images/scene-03.svg" alt="예제 장면 3" loading="lazy"><span><b>03</b> 플레이/내보내기</span></a>
+      </div>
+    </article>
+    <article class="card span2">
+      <h3>연결 구조는 project.json 한 곳에서 확인</h3>
+      <p class="bodycopy">각 scene에는 <code>cueIds</code>와 <code>image</code>가 같이 있습니다. 따라서 “이 자막 구간이 어떤 이미지인지”를 파일 여러 개를 오가며 추측할 필요가 없습니다.</p>
+      <pre id="sampleManifestPreview" class="json-inspector" tabindex="0" aria-label="예제 project.json 미리보기">project.json을 불러오는 중…</pre>
+    </article>
+    <article class="card span2">
+      <div class="section-head"><div><h3>현재 앱 프로젝트 JSON</h3><p class="micro">폴더를 불러오면 내부에서는 이미지가 data URL로 연결되어 저장됩니다.</p></div><button id="copyCurrentProjectJsonBtn" class="btn soft small">JSON 복사</button></div>
+      <pre id="currentProjectJson" class="json-inspector" tabindex="0" aria-label="현재 프로젝트 JSON 미리보기">예제 프로젝트를 불러오면 표시됩니다.</pre>
+    </article>
+  </div>
+</section>
+
+</main>
+<dialog id="exportDialog" class="onboarding-dialog export-dialog" aria-labelledby="exportDialogTitle">
+  <form method="dialog">
+    <div class="dialog-head"><div><h2 id="exportDialogTitle">내보내기</h2><p>저장 시 화면을 실제로 녹화할 필요는 없습니다. 형식에 맞게 렌더링하고 진행률만 표시합니다.</p></div><button class="icon-btn" value="close" aria-label="닫기">×</button></div>
+    <div class="export-options">
+      <section><h3>현재 장면</h3><div class="export-grid"><button id="recordBtn" type="button" class="export-card"><b>WebM</b><span>브라우저 영상 · 원본 해상도</span></button><button id="exportSceneSvgBtn" type="button" class="export-card"><b>Animated SVG</b><span>벡터 컨테이너 · 타임라인 포함</span></button><button id="exportSceneGifBtn" type="button" class="export-card"><b>GIF</b><span>공유용 · 자동 최적화</span></button></div></section>
+      <section><h3>전체 프로젝트</h3><div class="export-grid"><button id="recordProjectBtn" type="button" class="export-card"><b>WebM</b><span>장면 1 → 2 → 3 연속</span></button><button id="exportProjectSvgBtn" type="button" class="export-card"><b>Animated SVG</b><span>모든 장면을 한 SVG로</span></button><button id="exportProjectGifBtn" type="button" class="export-card"><b>GIF</b><span>모든 장면을 한 GIF로</span></button></div></section>
+    </div>
+    <div id="exportStatus" class="export-status hidden" role="status" aria-live="polite"><div><strong id="exportStatusText">렌더링 준비</strong><span id="exportStatusDetail"></span></div><progress id="exportProgress" max="100" value="0"></progress></div>
+    <div class="setting-row two export-settings"><label>GIF FPS<input id="gifFps" type="number" min="4" max="20" value="10"></label><label>GIF 최대 가로(px)<input id="gifMaxWidth" type="number" min="320" max="1280" value="720"></label></div>
+    <p class="micro">GIF는 파일 크기와 메모리 사용량 때문에 기본 10fps / 최대 720px로 렌더링합니다. WebM은 브라우저 MediaRecorder 특성상 재생 시간만큼 처리되며, 저장 상태는 내보내기 진행률로만 표시됩니다.</p>
+  </form>
+</dialog>
+<dialog id="onboardingDialog" class="onboarding-dialog" aria-labelledby="onboardingTitle">
+  <form method="dialog">
+    <div class="dialog-head"><div><h2 id="onboardingTitle">예제로 구조부터 확인하세요</h2><p>첫 실행 시 실제 데이터가 들어 있는 3장면 프로젝트를 준비했습니다.</p></div><button class="icon-btn" value="close" aria-label="닫기">×</button></div>
+    <div class="dialog-preview"><img src="./assets/og-image.png" alt="Whiteboard AI Motion Studio 예제 프로젝트 미리보기"></div>
+    <div class="dialog-actions"><button id="dialogDemoBtn" type="button" class="btn">예제 프로젝트 열기</button><button id="dialogNewBtn" type="button" class="btn soft">빈 프로젝트로 시작</button><button id="dialogRestoreBtn" type="button" class="btn ghost hidden">자동저장 복원</button></div>
+    <label class="check"><input id="dontShowOnboarding" type="checkbox"> 다음부터 이 안내를 표시하지 않기</label>
+  </form>
+</dialog>
+<footer class="site-footer"><span>Whiteboard AI Motion Studio · GitHub Pages Edition</span><nav aria-label="보조 링크"><a href="./README.md">README</a><a href="./docs/ARCHITECTURE.md">Architecture</a><a href="./sample-project/README.md">Sample Project</a></nav></footer>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="./site-config.js"></script>
+<script src="./app.js"></script>
+<script src="./project-bundle.js"></script>
+<script src="./exporters.js"></script>
+<script src="./enhancements.js"></script>
+</body></html>
