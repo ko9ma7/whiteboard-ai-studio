@@ -107,7 +107,7 @@
     const saved=await idbGet('project').catch(()=>null);const dialog=$('#onboardingDialog');
     if(saved?.project)$('#dialogRestoreBtn')?.classList.remove('hidden');
     if(!saved?.project)await loadDemo();else setAutosaveStatus('복원 가능','neutral');
-    if(dialog&&!localStorage.getItem('wai-onboarding-dismissed'))dialog.showModal();
+    if(dialog&&!localStorage.getItem('wai-onboarding-dismissed')&&!document.body.classList.contains('simple-mode'))dialog.showModal();
     $('#dialogDemoBtn')?.addEventListener('click',async()=>{await loadDemo();dialog?.close()});
     $('#dialogNewBtn')?.addEventListener('click',()=>{api.state.scenes=[];api.state.cues=[];api.selectScene(-1);$('#scriptInput').value='';$('#srtInput').value='';$('#srtBuilderOutput').value='';dialog?.close();saveAutosave(true)});
     $('#dialogRestoreBtn')?.addEventListener('click',async()=>{await restoreAutosave();dialog?.close()});

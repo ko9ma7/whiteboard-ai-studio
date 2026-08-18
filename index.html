@@ -16,7 +16,7 @@
   <meta property="og:site_name" content="Whiteboard AI Motion Studio" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Whiteboard AI Motion Studio" />
-  <meta name="twitter:description" content="대본 → SRT → 장면 → AI 이미지 → 애니메이션 → 플레이" />
+  <meta name="twitter:description" content="입력 → AI Blueprint → SVG/HTML → 애니메이션 → SRT/Export" />
   <meta name="twitter:image" content="__SITE_URL__assets/og-image.png" />
   <link rel="icon" type="image/svg+xml" href="./assets/icons/favicon.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="./assets/icons/favicon-32x32.png" />
@@ -30,7 +30,7 @@
 <header class="topbar">
   <div class="brand">
     <div class="brand-mark">W</div>
-    <div><h1>Whiteboard AI Motion Studio</h1><p>대본 → SRT → 장면 → AI 이미지 → 애니메이션 → 플레이</p></div>
+    <div><h1>Whiteboard AI Motion Studio</h1><p>입력 → AI Blueprint → SVG/HTML → 애니메이션 → SRT/Export</p></div>
   </div>
   <div class="top-actions">
     <span id="autosaveStatus" class="status-dot neutral" title="프로젝트 자동 저장 상태">자동저장 준비</span>
@@ -43,10 +43,97 @@
     <label class="theme-control" title="화면 테마"><span class="sr-only">화면 테마</span><select id="themeSelect" aria-label="화면 테마"><option value="system">시스템</option><option value="light">라이트</option><option value="dark">다크</option></select></label>
   </div>
 </header>
+<section id="simpleStart" class="simple-start" aria-labelledby="simpleStartTitle">
+  <div class="simple-shell">
+    <div id="simpleChooser" class="simple-chooser">
+      <div class="simple-hero">
+        <p class="simple-kicker">Whiteboard AI Motion Studio</p>
+        <h2 id="simpleStartTitle">어떻게 만들까요?</h2>
+        <p>먼저 시작 방식 하나만 고르세요. 선택하지 않은 기능은 보이지 않습니다.</p>
+      </div>
+      <div class="simple-methods">
+        <button class="simple-method primary" data-simple-mode="describe">
+          <span class="simple-method-icon">✦</span><b>설명만으로 만들기</b><small>원하는 장면을 글로 설명 → 자동 설계 / 외부 AI</small>
+        </button>
+        <button class="simple-method" data-simple-mode="srt">
+          <span class="simple-method-icon">CC</span><b>대본 · SRT로 만들기</b><small>대본이나 자막을 넣어 장면 자동 구성</small>
+        </button>
+        <button class="simple-method" data-simple-mode="assets">
+          <span class="simple-method-icon">▧</span><b>이미지 · SVG · HTML로 만들기</b><small>이미 만든 자료를 가져와 애니메이션 구성</small>
+        </button>
+        <button class="simple-method" data-simple-mode="project">
+          <span class="simple-method-icon">↗</span><b>기존 프로젝트 열기</b><small>프로젝트 폴더 또는 JSON을 그대로 불러오기</small>
+        </button>
+      </div>
+      <div class="simple-footer-actions">
+        <button id="simpleLoadExampleBtn" class="btn soft">3장면 예제로 보기</button>
+        <button id="simpleOpenAdvancedBtn" class="btn ghost">고급 편집 바로 열기</button>
+      </div>
+    </div>
+
+    <div id="simpleFlow" class="simple-flow hidden">
+      <div class="simple-flow-head">
+        <button id="simpleBackBtn" class="btn ghost small">← 방식 다시 선택</button>
+        <div><h2 id="simpleFlowTitle">설명만으로 만들기</h2><p id="simpleFlowSubtitle"></p></div>
+      </div>
+
+      <div id="simpleDescribePanel" class="simple-panel hidden">
+        <label class="simple-main-label">원하는 장면 또는 영상 설명
+          <textarea id="simpleDescription" rows="9" placeholder="예: 화이트보드에 손이 등장해서 ‘대본 → SRT → 장면 → 이미지 → 영상’ 흐름을 왼쪽에서 오른쪽으로 그려주세요. 각 단계는 따로 그려지고 마지막에 색이 채워졌으면 합니다."></textarea>
+        </label>
+        <div class="simple-options">
+          <label>만드는 방식<select id="simpleVisualStyle"><option value="whiteboard">손그림 화이트보드</option><option value="diagram">깔끔한 다이어그램</option><option value="kinetic">텍스트 모션</option><option value="mixed">자동 혼합</option></select></label>
+          <label>장면 길이<select id="simpleSceneLength"><option value="5">짧게</option><option value="8" selected>보통</option><option value="15">길게</option></select></label>
+        </div>
+        <div class="simple-primary-actions">
+          <button id="simpleAutoBuildBtn" class="btn large">바로 초안 만들기</button>
+          <button id="simpleExternalAiBtn" class="btn soft large">외부 AI에서 만들기</button>
+        </div>
+        <div id="simpleExternalAiBox" class="simple-ai-box hidden">
+          <div class="simple-ai-head"><div><b>외부 AI용 제작 지시서</b><small>ChatGPT · Gemini · Claude · Grok 어디에든 그대로 붙여넣습니다.</small></div><select id="simpleAiProvider"><option value="chatgpt">ChatGPT</option><option value="gemini">Gemini</option><option value="claude">Claude</option><option value="grok">Grok</option></select></div>
+          <textarea id="simpleAiPrompt" rows="13" readonly></textarea>
+          <div class="button-row wrap"><button id="simpleCopyAiPromptBtn" class="btn soft">지시서 복사</button><button id="simpleOpenAiSiteBtn" class="btn soft">AI 사이트 열기</button></div>
+          <label>AI가 만든 결과 붙여넣기<textarea id="simpleAiResult" rows="11" placeholder="AI가 반환한 Blueprint JSON, SVG 또는 HTML을 여기에 붙여넣으세요."></textarea></label>
+          <button id="simpleApplyAiResultBtn" class="btn wide">결과 적용 → 미리보기</button>
+        </div>
+      </div>
+
+      <div id="simpleSrtPanel" class="simple-panel hidden">
+        <label class="file-drop"><strong>대본 / SRT 파일 선택</strong><span>.txt · .md · .srt</span><input id="simpleSrtFile" type="file" accept=".txt,.md,.srt,text/plain" hidden></label>
+        <label class="simple-main-label">또는 바로 붙여넣기<textarea id="simpleSrtInput" rows="12" placeholder="대본 또는 SRT를 붙여넣으세요."></textarea></label>
+        <button id="simpleSrtBuildBtn" class="btn large wide">장면 자동 만들기</button>
+      </div>
+
+      <div id="simpleAssetsPanel" class="simple-panel hidden">
+        <label class="file-drop"><strong>이미지 · SVG · HTML 선택</strong><span>여러 파일 선택 가능</span><input id="simpleAssetsFiles" type="file" multiple accept="image/*,.svg,.html,.htm" hidden></label>
+        <div id="simpleAssetsSummary" class="hint-box">선택한 자료를 장면 순서대로 자동 배치합니다.</div>
+        <label class="simple-main-label">SVG / HTML을 직접 붙여넣어도 됩니다<textarea id="simpleMarkupInput" rows="10" placeholder="&lt;svg ...&gt; 또는 &lt;html ...&gt;"></textarea></label>
+        <button id="simpleAssetsBuildBtn" class="btn large wide">자료 가져와서 만들기</button>
+      </div>
+
+      <div id="simpleProjectPanel" class="simple-panel hidden">
+        <label class="file-drop"><strong>프로젝트 폴더 열기</strong><span>project.json + SRT + images 폴더 권장</span><input id="simpleProjectFolder" type="file" webkitdirectory directory multiple hidden></label>
+        <label class="file-drop"><strong>프로젝트 JSON 열기</strong><span>기존 Whiteboard 프로젝트</span><input id="simpleProjectJson" type="file" accept=".json,application/json" hidden></label>
+        <p class="micro">폴더를 선택하면 SRT와 이미지 연결까지 기존 프로젝트 로더로 넘깁니다.</p>
+      </div>
+    </div>
+
+    <div id="simpleResult" class="simple-result hidden">
+      <div class="simple-result-head"><div><p class="simple-kicker">초안 완성</p><h2 id="simpleResultTitle">장면을 만들었습니다</h2><p id="simpleResultMeta"></p></div><button id="simpleStartOverBtn" class="btn ghost">처음부터</button></div>
+      <div id="simpleSceneCards" class="simple-scene-cards"></div>
+      <div class="simple-result-actions">
+        <button id="simpleEditBtn" class="btn large">미리보기 · 수정하기</button>
+        <button id="simpleExportBtn" class="btn soft large">내보내기</button>
+        <button id="simpleAdvancedResultBtn" class="btn ghost large">고급 편집</button>
+      </div>
+    </div>
+  </div>
+</section>
 
 <nav class="tabs" aria-label="주요 기능">
-  <button class="tab active" data-tab="studio">제작 스튜디오</button>
-  <button class="tab" data-tab="srt">SRT 만들기</button>
+  <button class="tab active" data-tab="blueprint">AI 설계 / 컴파일</button>
+  <button class="tab" data-tab="studio">제작 스튜디오</button>
+  <button class="tab" data-tab="srt">SRT / 자막</button>
   <button class="tab" data-tab="prompt">AI 장면 프롬프트</button>
   <button class="tab" data-tab="api">API 연결</button>
   <button class="tab" data-tab="guide">처음부터 끝까지</button>
@@ -54,7 +141,80 @@
 </nav>
 
 <main id="mainContent">
-<section id="tab-studio" class="tabview active">
+
+<section id="tab-blueprint" class="tabview page-view active">
+  <div class="page-head blueprint-head">
+    <div>
+      <h2>AI Blueprint → SVG / HTML → Timeline → SRT</h2>
+      <p>SRT를 출발점으로 강제하지 않습니다. 어떤 자료를 넣어도 먼저 하나의 장면 설계 데이터로 통합한 뒤, 필요한 형식으로 다시 만들어냅니다.</p>
+    </div>
+    <div class="button-row"><button id="bpLoadExampleBtn" class="btn soft">완성 예제</button><button id="bpApplyStudioBtn" class="btn">스튜디오로 보내기 →</button></div>
+  </div>
+
+  <div class="pipeline-rail" aria-label="제작 파이프라인">
+    <div><b>1</b><span>다양한 입력</span><small>Text · SRT · JSON · SVG · HTML · Images</small></div>
+    <i>→</i><div class="active"><b>2</b><span>Blueprint</span><small>장면 · 레이아웃 · 오브젝트 · 타이밍</small></div>
+    <i>→</i><div><b>3</b><span>Compile</span><small>SVG · HTML · Whiteboard</small></div>
+    <i>→</i><div><b>4</b><span>Derive</span><small>SRT · Project JSON · Timeline</small></div>
+    <i>→</i><div><b>5</b><span>Play / Export</span><small>GIF · SVG · WebM · HyperFrames</small></div>
+  </div>
+
+  <div class="blueprint-layout">
+    <aside class="card bp-input-card">
+      <div class="card-title"><span class="num">1</span><div><h3>무엇이든 넣기</h3><p>입력 종류를 먼저 맞출 필요가 없습니다.</p></div></div>
+      <div class="input-mode-grid">
+        <button class="input-mode active" data-bp-mode="text"><b>대본 / 글</b><span>가장 쉬움</span></button>
+        <button class="input-mode" data-bp-mode="srt"><b>SRT</b><span>기존 자막</span></button>
+        <button class="input-mode" data-bp-mode="json"><b>JSON</b><span>기존 설계</span></button>
+        <button class="input-mode" data-bp-mode="markup"><b>SVG / HTML</b><span>이미 만든 화면</span></button>
+      </div>
+      <label>입력 내용<textarea id="bpSourceInput" rows="13" placeholder="대본, SRT, Blueprint JSON, SVG 또는 HTML을 붙여넣으세요."></textarea></label>
+      <label class="file-drop"><strong>파일 여러 개 / 이미지 불러오기</strong><span>txt · md · srt · json · svg · html · png · jpg</span><input id="bpFilesInput" type="file" multiple accept=".txt,.md,.srt,.json,.svg,.html,.htm,image/*" hidden></label>
+      <div id="bpFileSummary" class="hint-box">파일을 고르면 형식을 자동 판별합니다.</div>
+      <div class="setting-row two">
+        <label>기본 제작 방식<select id="bpVisualMode"><option value="whiteboard">화이트보드 손그림</option><option value="diagram">다이어그램</option><option value="kinetic">키네틱 텍스트</option><option value="mixed">혼합형</option></select></label>
+        <label>장면 목표 길이<select id="bpSceneLength"><option value="5">짧게 4~6초</option><option value="8" selected>보통 6~10초</option><option value="15">길게 10~18초</option><option value="25">설명형 20~30초</option></select></label>
+      </div>
+      <label class="check"><input id="bpAllowText" type="checkbox"> 생성 SVG 안에 글자 허용 (기본은 자막/HTML 레이어로 분리)</label>
+      <div class="button-row stack-mobile"><button id="bpLocalDesignBtn" class="btn">기본값으로 자동 설계</button><button id="bpAiDesignBtn" class="btn soft">연결된 AI로 정교하게 설계</button></div>
+    </aside>
+
+    <section class="bp-main">
+      <article class="card">
+        <div class="section-head"><div><h3>2. Blueprint — 이 데이터가 기준입니다</h3><p class="micro">SRT도 이미지도 최종 기준이 아니라 이 설계에서 파생됩니다.</p></div><div class="button-row"><button id="bpValidateBtn" class="btn ghost small">검사</button><button id="bpFormatBtn" class="btn ghost small">JSON 정리</button></div></div>
+        <textarea id="bpJsonEditor" class="code-editor" rows="21" spellcheck="false" aria-label="Blueprint JSON 편집기"></textarea>
+        <div id="bpValidation" class="validation neutral">Blueprint를 만들면 장면 수·타이밍·오브젝트를 검사합니다.</div>
+      </article>
+      <article class="card">
+        <div class="section-head"><div><h3>3. 장면 미리보기 / 컴파일</h3><p class="micro">같은 Blueprint에서 SVG와 HTML을 동시에 생성합니다.</p></div><select id="bpPreviewScene" aria-label="미리보기 장면"></select></div>
+        <div class="bp-preview-grid">
+          <div class="bp-preview-pane"><div class="preview-label">SVG</div><div id="bpSvgPreview" class="bp-preview-canvas"></div></div>
+          <div class="bp-preview-pane"><div class="preview-label">HTML</div><iframe id="bpHtmlPreview" class="bp-html-preview" title="HTML composition 미리보기" sandbox="allow-scripts"></iframe></div>
+        </div>
+        <div class="button-row wrap"><button id="bpCompileBtn" class="btn">SVG + HTML 다시 생성</button><button id="bpDownloadSvgBtn" class="btn soft">현재 SVG</button><button id="bpDownloadHtmlBtn" class="btn soft">현재 HTML</button><button id="bpDownloadSrtBtn" class="btn soft">파생 SRT</button><button id="bpDownloadZipBtn" class="btn soft">프로젝트 ZIP</button></div>
+      </article>
+    </section>
+
+    <aside class="card bp-inspector">
+      <div class="card-title"><span class="num">4</span><div><h3>쉬운 제작 프리셋</h3><p>복잡한 기술 옵션을 목적 중심으로 묶었습니다.</p></div></div>
+      <div class="preset-list">
+        <button class="bp-preset active" data-preset="whiteboard"><b>손그림 설명</b><span>Ink → Color → Gaze<br>grid/skeleton 경로</span></button>
+        <button class="bp-preset" data-preset="diagram"><b>도식 설명</b><span>박스 · 화살표 · 단계</span></button>
+        <button class="bp-preset" data-preset="kinetic"><b>텍스트 중심</b><span>타이핑 · Pop · Marker</span></button>
+        <button class="bp-preset" data-preset="mixed"><b>AI 자동 혼합</b><span>장면마다 가장 적합한 방식</span></button>
+      </div>
+      <hr>
+      <h3>화이트보드 기본값</h3>
+      <label>펜 경로<select id="bpInkPath"><option value="grid">Grid — 안정적</option><option value="skeleton">Skeleton — 선을 더 정확히 추적</option></select></label>
+      <label>색 채우기<select id="bpColorFill"><option value="contour-wipe">Contour wipe</option><option value="brush">Brush</option></select></label>
+      <label>호흡 / 멈춤<select id="bpPause"><option value="heavy">Heavy</option><option value="auto">Auto</option><option value="light">Light</option><option value="off">Off</option></select></label>
+      <label>장면 전환<select id="bpTransition"><option value="cut">Cut</option><option value="fade">Fade</option><option value="slide">Slide</option><option value="wipe">Wipe</option></select></label>
+      <div class="hint-box"><b>핵심 원칙</b><br>원하는 결과를 얻기 위해 사용자가 직접 좌표와 타임라인을 먼저 만들 필요가 없습니다. AI/기본 설계가 초안을 만들고, 필요할 때만 Studio에서 세부 조정합니다.</div>
+    </aside>
+  </div>
+</section>
+
+<section id="tab-studio" class="tabview">
   <div class="studio-layout">
     <aside class="panel source-panel">
       <section class="bundle-section">
@@ -225,14 +385,14 @@
 <section id="tab-guide" class="tabview page-view">
   <div class="page-head"><div><h2>처음부터 플레이까지</h2><p>권장 제작 순서입니다. API 없이도 전 과정의 대부분을 사용할 수 있고, Gateway를 연결하면 자동화 범위가 넓어집니다.</p></div></div>
   <div class="flow">
-    <article><b>01</b><h3>대본 준비</h3><p>내레이션 원문을 SRT 탭에 입력합니다.</p></article>
-    <article><b>02</b><h3>SRT 생성</h3><p>로컬 자동 타이밍, 외부 AI, 연결 API, 음성 전사 중 하나를 선택합니다.</p></article>
-    <article><b>03</b><h3>장면 분할</h3><p>SRT를 20~30초 정도의 의미 단위 장면으로 나눕니다.</p></article>
-    <article><b>04</b><h3>화면 프롬프트</h3><p>각 장면의 자막에서 16:9 일러스트 제작 프롬프트를 만듭니다.</p></article>
-    <article><b>05</b><h3>이미지 생성</h3><p>외부 AI 웹 또는 OpenAI/Gemini/xAI API로 이미지를 생성합니다.</p></article>
-    <article><b>06</b><h3>Reveal 요소</h3><p>전체 영역 자동 요소로 즉시 재생하거나 세부 영역을 직접 지정합니다.</p></article>
-    <article><b>07</b><h3>플레이</h3><p>장면 또는 전체 프로젝트를 연속 재생해 타이밍을 검토합니다.</p></article>
-    <article><b>08</b><h3>내보내기</h3><p>WebM, Animated SVG, GIF, annotation.json, 프로젝트 JSON, HyperFrames HTML을 저장합니다.</p></article>
+    <article><b>01</b><h3>아무 자료나 입력</h3><p>대본, SRT, JSON, SVG/HTML, 이미지 또는 프로젝트 폴더에서 시작합니다.</p></article>
+    <article><b>02</b><h3>Blueprint 설계</h3><p>기본 규칙 또는 AI가 장면·오브젝트·레이아웃·타이밍을 하나의 JSON으로 만듭니다.</p></article>
+    <article><b>03</b><h3>화면 컴파일</h3><p>같은 Blueprint에서 SVG와 HTML composition을 동시에 생성합니다.</p></article>
+    <article><b>04</b><h3>애니메이션 적용</h3><p>화이트보드 Ink→Color→Gaze, 마스크, 텍스트, 전환 프리셋을 적용합니다.</p></article>
+    <article><b>05</b><h3>SRT 파생</h3><p>장면 narration과 duration에서 SRT를 자동 생성합니다. 기존 SRT가 있다면 반대로 Blueprint 입력으로 사용할 수도 있습니다.</p></article>
+    <article><b>06</b><h3>Studio 미세조정</h3><p>필요한 경우에만 영역·순서·타이밍·이미지를 직접 수정합니다.</p></article>
+    <article><b>07</b><h3>플레이</h3><p>장면 또는 전체 프로젝트를 연속 재생해 결과를 확인합니다.</p></article>
+    <article><b>08</b><h3>내보내기</h3><p>Blueprint ZIP, SRT, SVG, HTML, GIF, WebM, HyperFrames 결과를 저장합니다.</p></article>
   </div>
   <div class="guide-grid">
     <article class="card"><h3>화이트보드 프롬프트 예시</h3><pre>16:9 educational whiteboard illustration on warm cream paper. Clean black hand-drawn ink lines, restrained flat accent colors, one clear focal subject, generous negative space, no decorative clutter, no captions or labels. Show the concept visually so individual regions can be revealed in narration order. Consistent character design and line weight across scenes.</pre></article>
@@ -301,6 +461,8 @@
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 <script src="./site-config.js"></script>
 <script src="./app.js"></script>
+<script src="./blueprint-engine.js"></script>
+  <script src="./simple-start.js"></script>
 <script src="./project-bundle.js"></script>
 <script src="./exporters.js"></script>
 <script src="./enhancements.js"></script>

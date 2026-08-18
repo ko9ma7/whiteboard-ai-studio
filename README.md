@@ -1,79 +1,213 @@
-# Whiteboard AI Motion Studio v4
+# Whiteboard AI Motion Studio v5
 
-GitHub Pages에서 실행되는 브라우저 기반 화이트보드 애니메이션 제작 도구입니다.
+GitHub Pages에서 실행되는 **Blueprint-first 화이트보드/모션 제작 웹서비스**입니다.
 
-**권장 흐름은 하나의 프로젝트 폴더를 통째로 불러오는 방식**입니다.
+v5의 핵심은 **SRT를 제작의 출발점으로 강제하지 않는 것**입니다. 사용자가 대본, 기존 SRT, JSON, SVG/HTML, 이미지, 프로젝트 폴더 중 무엇을 가지고 있든 먼저 하나의 `whiteboard-blueprint/v1` 데이터로 통합하고, 그 설계에서 SVG/HTML/Studio/SRT/영상 결과를 파생합니다.
+
+```text
+Text / Markdown / SRT / JSON / SVG / HTML / Images / Folder
+                         ↓
+              whiteboard-blueprint/v1
+                         ↓
+       ┌─────────────────┼─────────────────┐
+       ↓                 ↓                 ↓
+   SVG scenes      HTML compositions    Studio data
+       └─────────────────┼─────────────────┘
+                         ↓
+      SRT / Project JSON / GIF / WebM / Animated SVG / HyperFrames
+```
+
+## Preview / 첫 실행
+
+첫 탭은 **AI 설계 / 컴파일**입니다.
+
+1. 입력 자료를 붙여넣거나 여러 파일을 선택합니다.
+2. **기본값으로 자동 설계** 또는 **연결된 AI로 정교하게 설계**를 선택합니다.
+3. 생성된 Blueprint JSON을 확인합니다.
+4. 같은 Blueprint에서 SVG와 HTML composition을 즉시 미리봅니다.
+5. 필요하면 **스튜디오로 보내기**로 세부 reveal/timing을 수정합니다.
+6. SRT, SVG, HTML, 프로젝트 ZIP, GIF, WebM, HyperFrames 결과로 저장합니다.
+
+## 왜 Blueprint가 기준인가
+
+SRT는 `텍스트 + 시간`에는 적합하지만 화면의 다음 정보를 표현하기 어렵습니다.
+
+- 레이아웃
+- 화면 오브젝트
+- draw order
+- hand path
+- Ink → Color → Gaze 방식
+- SVG path / mask
+- HTML composition
+- 장면 전환
+- multi-track timing
+
+v5에서는 이런 내용을 Blueprint가 보유하고, SRT는 `scenes[].narration + durationMs`에서 자동 파생할 수 있습니다. 반대로 기존 SRT를 Blueprint 입력으로 사용하는 것도 가능합니다.
+
+자세한 구조: [`docs/BLUEPRINT_PIPELINE.md`](./docs/BLUEPRINT_PIPELINE.md)
+
+## 다양한 시작 방법
+
+### 1. 대본 / 문서
+
+가장 쉬운 방식입니다. 문장을 장면으로 나눈 뒤 레이아웃·오브젝트·duration을 자동 구성합니다.
+
+### 2. 기존 SRT
+
+SRT의 자막 텍스트와 duration을 보존하면서 시각 Blueprint를 추가합니다.
+
+### 3. Blueprint JSON
+
+이전에 작업한 설계를 그대로 다시 열고 수정합니다.
+
+### 4. SVG / HTML
+
+이미 만든 화면을 입력 자료로 사용할 수 있습니다. v5 UI에서는 마크업을 그대로 보관하거나 AI 재설계의 입력으로 사용할 수 있습니다.
+
+### 5. 이미지 여러 장
+
+이미지 파일을 다른 입력과 함께 불러와 장면 자산으로 사용할 수 있습니다.
+
+### 6. 기존 프로젝트 폴더
+
+v4 방식도 유지됩니다.
 
 ```text
 project-folder/
-├─ project.json        # SRT ↔ 장면 ↔ 이미지 연결표
-├─ story.srt           # 전체 자막
-├─ script.txt          # 원본 대본(선택)
+├─ blueprint.json      # v5 권장: 장면 설계의 기준
+├─ project.json        # Studio/폴더 연결용 manifest
+├─ story.srt
+├─ script.txt
 └─ images/
-   ├─ scene-01.png
-   ├─ scene-02.png
-   └─ scene-03.png
+   ├─ scene-01.svg
+   ├─ scene-02.svg
+   └─ scene-03.svg
 ```
 
-앱에서 **폴더 통째로 불러오기**를 선택하면 `project.json`을 기준으로 SRT 구간과 장면 이미지를 자동 연결합니다. `project.json`이 없어도 `.srt`와 `scene-01.*`, `scene-02.*` 같은 이미지 이름을 이용해 자동 연결할 수 있습니다.
+## Blueprint 기본 스키마
 
-## Preview
+```json
+{
+  "format": "whiteboard-blueprint/v1",
+  "canvas": { "width": 1280, "height": 720 },
+  "style": {
+    "paper": "#F5EBD7",
+    "ink": "#383A36",
+    "accent": "#FFA500",
+    "allowText": false
+  },
+  "scenes": [
+    {
+      "id": "scene-01",
+      "title": "입력에서 설계 만들기",
+      "narration": "...",
+      "durationMs": 6500,
+      "visualMode": "whiteboard",
+      "animation": {
+        "preset": "ink-color-gaze",
+        "inkPath": "grid",
+        "colorFill": "contour-wipe",
+        "pause": "heavy"
+      },
+      "objects": [
+        {
+          "id": "subject",
+          "type": "box",
+          "x": 120,
+          "y": 210,
+          "w": 310,
+          "h": 260,
+          "drawOrder": 1
+        }
+      ]
+    }
+  ]
+}
+```
 
-첫 실행 시 `sample-project/`의 3장면 예제를 바로 열 수 있습니다.
+## 쉬운 제작 프리셋
 
-- Scene 01: 대본 → SRT
-- Scene 02: SRT → 장면 / AI 프롬프트
-- Scene 03: 이미지 → Reveal → 플레이 / 저장
+UI에서 복잡한 기술명을 목적 중심 프리셋으로 묶었습니다.
 
-스튜디오 상단에는 1·2·3 장면 연결 상태가 한 줄로 표시되고, 왼쪽 **장면 연결** 영역에서 각 SRT 구간에 연결할 이미지를 드롭다운 또는 개별 파일 선택으로 바꿀 수 있습니다.
+- **손그림 설명** — Ink → Color → Gaze, Grid/Skeleton, Contour wipe/Brush
+- **도식 설명** — 박스, 화살표, 단계, mask reveal
+- **텍스트 중심** — word pop / kinetic text
+- **AI 자동 혼합** — 장면별 적합한 visualMode를 AI가 결정
 
-## Features
+기본 설계는 API 없이 동작합니다. AI Gateway를 연결하면 같은 스키마의 더 정교한 Blueprint를 생성합니다.
 
-### 프로젝트 / SRT
+## 컴파일 결과
 
-- 프로젝트 폴더 전체 불러오기 (`webkitdirectory`)
-- `project.json` 기반 명시적 SRT ↔ 이미지 연결
-- manifest가 없을 때 파일명 기반 자동 연결
-- SRT 파일 업로드 / 직접 편집
-- 대본 → 로컬 SRT 자동 생성
-- AI SRT 생성 프롬프트
-- Gateway를 통한 AI SRT 생성
-- 음성/영상 전사 → SRT
-- 장면 자동 분할
+### SVG
 
-### 장면 / 이미지
+Blueprint의 오브젝트와 style을 브라우저에서 SVG로 생성합니다. 장면별 SVG를 바로 저장할 수 있습니다.
 
-- 장면 1·2·3 연결 상태를 항상 확인할 수 있는 Scene Link Strip
-- 장면별 연결 이미지 드롭다운
-- 장면별 직접 이미지 교체
-- AI 이미지 생성 결과 즉시 연결
-- 이미지 영역 직접 드래그 지정
-- Reveal 순서 / 시작 / 지속 / 방향 / 연결 자막 편집
+### HTML Composition
 
-### 재생 / 저장
+장면별 HTML에는 `data-composition-id`, `data-start`, `data-duration`, `data-track-index`와 paused GSAP timeline을 구성하여 HyperFrames식 composition으로 확장하기 쉽게 만들었습니다.
 
-- 현재 장면 재생
-- 전체 프로젝트 연속 재생
-- 타임라인 Scrub
+### SRT
+
+각 장면의 `narration`과 `durationMs`에서 자동 파생합니다.
+
+### 프로젝트 ZIP
+
+**프로젝트 ZIP** 버튼은 브라우저에서 다음 구조를 한 번에 생성합니다.
+
+```text
+compiled-project.zip
+├─ blueprint.json
+├─ story.srt
+├─ project.json
+├─ scenes/
+│  ├─ scene-01.svg
+│  ├─ scene-02.svg
+│  └─ ...
+└─ compositions/
+   ├─ scene-01.html
+   ├─ scene-02.html
+   └─ ...
+```
+
+따라서 파일을 하나씩 내려받아 다시 연결할 필요가 없습니다.
+
+## Studio 기능
+
+Blueprint로 자동 초안을 만든 뒤 필요한 경우에만 Studio에서 다음을 미세 조정합니다.
+
+- 프로젝트 폴더 전체 불러오기
+- SRT 파일/직접 편집
+- Scene Link Strip
+- 장면별 이미지 연결/교체
+- AI 이미지 생성
+- 영역 직접 드래그 지정
+- reveal 시작/지속/방향/순서
+- 현재 장면/전체 프로젝트 재생
 - 자막 Burn-in
-- **WebM 저장**
-- **Animated SVG 저장**
-- **GIF 저장**
-- 현재 장면 / 전체 프로젝트 각각 저장 가능
-- 프로젝트 JSON
-- `annotation.json`
+- JSON / annotation.json / HyperFrames HTML
+
+## 내보내기
+
+- WebM
+- Animated SVG
+- GIF
+- SRT
+- Blueprint JSON
+- 장면 SVG
+- 장면 HTML
+- 프로젝트 ZIP
+- Studio Project JSON
 - HyperFrames HTML
 
-WebM 저장은 브라우저의 `MediaRecorder`를 내부적으로 사용하지만 사용자 UI에는 **“녹화 중”을 표시하지 않습니다.** 저장 창에는 `내보내는 중 · 0–100%` 진행률만 표시됩니다.
+WebM은 내부적으로 MediaRecorder를 사용하지만 UI에는 “녹화 중” 대신 렌더 진행률만 표시합니다.
 
-GIF는 별도 외부 라이브러리 없이 포함된 GIF89a encoder로 생성합니다. 기본값은 메모리와 파일 크기를 고려해 10fps / 최대 720px입니다.
+## Sample Project
 
-Animated SVG는 Reveal 타이밍을 SVG clipPath animation으로 저장합니다. 이미지가 SVG가 아니어도 data URL로 SVG 컨테이너 안에 포함할 수 있습니다.
-
-## sample-project — 먼저 이것부터 보세요
+`sample-project/`는 3장면 예제이며 Blueprint와 파생 결과의 연결을 같은 폴더에서 확인할 수 있습니다.
 
 ```text
 sample-project/
+├─ blueprint.json
 ├─ project.json
 ├─ story.srt
 ├─ script.txt
@@ -83,54 +217,7 @@ sample-project/
    └─ scene-03.svg
 ```
 
-자료를 여러 폴더로 나누지 않았습니다. **예제 하나의 폴더만 보면 연결 관계를 전부 확인할 수 있습니다.**
-
-### project.json의 핵심
-
-```json
-{
-  "projectName": "sample-whiteboard-3-scenes",
-  "srt": "story.srt",
-  "scenes": [
-    {
-      "id": "scene-01",
-      "cueIds": [1, 2],
-      "image": "images/scene-01.svg",
-      "prompt": "...",
-      "elements": []
-    },
-    {
-      "id": "scene-02",
-      "cueIds": [3, 4],
-      "image": "images/scene-02.svg"
-    },
-    {
-      "id": "scene-03",
-      "cueIds": [5, 6],
-      "image": "images/scene-03.svg"
-    }
-  ]
-}
-```
-
-이 구조에서 관계는 단순합니다.
-
-```text
-story.srt #1, #2 → scene-01 → images/scene-01.svg
-story.srt #3, #4 → scene-02 → images/scene-02.svg
-story.srt #5, #6 → scene-03 → images/scene-03.svg
-```
-
-## 내 프로젝트 만드는 가장 쉬운 방법
-
-1. `sample-project/` 폴더를 복사합니다.
-2. `story.srt`를 내 SRT로 바꿉니다.
-3. `images/`에 내 이미지를 넣습니다.
-4. `project.json`에서 각 장면의 `cueIds`와 `image` 경로를 수정합니다.
-5. 웹앱 → **폴더 통째로 불러오기**에서 해당 폴더를 선택합니다.
-6. 왼쪽 **장면 연결** 표에서 매핑을 확인합니다.
-7. `▶ 전체`로 확인합니다.
-8. **내보내기**에서 WebM / Animated SVG / GIF 중 원하는 형식으로 저장합니다.
+먼저 [`sample-project/blueprint.json`](./sample-project/blueprint.json)을 보고, 이후 `story.srt`와 `project.json`을 비교하면 데이터 흐름을 이해하기 쉽습니다.
 
 ## AI Gateway
 
@@ -151,16 +238,17 @@ Gateway 코드는 `worker/`에 있습니다.
 
 ## Tech Stack
 
-- HTML5
-- CSS3
-- Vanilla JavaScript ES6+
+- HTML5 / CSS3 / Vanilla JavaScript ES6+
 - Canvas 2D
+- SVG / HTML composition compiler
+- GSAP-compatible generated HTML
 - IndexedDB
 - MediaRecorder / Canvas Capture Stream
-- Native SVG SMIL animation
+- Native SVG animation
 - Built-in GIF89a/LZW encoder
+- Browser ZIP writer (store method)
 - Service Worker / Web App Manifest
-- Cloudflare Worker (optional AI Gateway)
+- Cloudflare Worker AI Gateway (optional)
 
 ## Project Structure
 
@@ -169,19 +257,18 @@ Gateway 코드는 `worker/`에 있습니다.
 ├─ index.html
 ├─ styles.css
 ├─ app.js
-├─ project-bundle.js     # 폴더 import / SRT↔이미지 연결
-├─ exporters.js          # WebM 외 Animated SVG / GIF
+├─ blueprint-engine.js   # 입력 → Blueprint → SVG/HTML/SRT/ZIP
+├─ project-bundle.js     # 기존 폴더 import / SRT↔이미지 연결
+├─ exporters.js          # WebM / Animated SVG / GIF
 ├─ enhancements.js       # autosave / theme / onboarding
 ├─ site-config.js
 │
-├─ sample-project/       # 3장면 완성 예제 — 한 폴더에 통합
+├─ sample-project/
+│  ├─ blueprint.json
 │  ├─ project.json
 │  ├─ story.srt
 │  ├─ script.txt
 │  └─ images/
-│     ├─ scene-01.svg
-│     ├─ scene-02.svg
-│     └─ scene-03.svg
 │
 ├─ worker/
 ├─ docs/
@@ -197,7 +284,7 @@ npm install
 npm run dev
 ```
 
-기본 개발 URL:
+기본 URL:
 
 ```text
 http://localhost:5173/
@@ -218,7 +305,7 @@ npm test
 - SRT cue ↔ scene mapping
 - scene image 존재 여부
 - Reveal 영역 범위
-- Build 결과 로컬 asset 링크
+- Build 결과 asset 링크
 - Service Worker cache 대상
 
 ## Build
@@ -227,9 +314,7 @@ npm test
 npm run build
 ```
 
-결과는 `dist/`에 생성됩니다.
-
-GitHub Pages repository path도 자동 계산합니다.
+GitHub Pages repository path:
 
 ```bash
 GITHUB_REPOSITORY=USERNAME/REPOSITORY npm run build
@@ -238,10 +323,10 @@ GITHUB_REPOSITORY=USERNAME/REPOSITORY npm run build
 ## GitHub Pages Deployment
 
 1. 새 GitHub Repository를 만듭니다.
-2. 이 프로젝트 전체를 push합니다.
+2. 프로젝트 전체를 push합니다.
 3. **Settings → Pages → Source → GitHub Actions**를 선택합니다.
 4. `main`에 push하면 `.github/workflows/deploy.yml`이 test/build/deploy를 실행합니다.
-5. 배포 주소:
+5. 배포 주소는 보통 다음 형태입니다.
 
 ```text
 https://USERNAME.github.io/REPOSITORY/
@@ -251,20 +336,35 @@ https://USERNAME.github.io/REPOSITORY/
 
 ### WebM
 
-Chrome/Edge 계열 권장. MediaRecorder가 실시간 타임라인을 처리하므로 영상 길이가 길면 처리 시간도 늘어날 수 있습니다. UI에서는 녹화 상태를 노출하지 않고 렌더 진행률로 표시합니다.
+Chrome/Edge 계열을 권장합니다. 영상 길이가 길수록 처리 시간이 늘어날 수 있습니다.
 
 ### GIF
 
-GIF는 용량이 급격히 커질 수 있습니다. 기본 10fps / 720px을 권장합니다. 전체 프로젝트가 너무 긴 경우 앱이 메모리 보호를 위해 프레임 수 제한 안내를 표시합니다.
+기본 10fps / 최대 720px을 권장합니다.
 
 ### Animated SVG
 
-브라우저에서 바로 열어 애니메이션을 볼 수 있습니다. SVG 안에 raster image가 data URL로 포함될 수 있으므로 “모든 장면이 순수 벡터로 변환된다”는 의미는 아닙니다. 컨테이너와 애니메이션 타임라인이 SVG 형식으로 저장됩니다.
+raster image가 data URL로 포함될 수 있으므로 모든 이미지가 순수 벡터로 변환되는 것은 아닙니다.
 
 ## Custom Domain
 
-GitHub Pages Settings에서 custom domain을 설정한 뒤 필요하면 `CNAME` 파일을 추가하세요. `SITE_URL` 환경 변수를 사용하면 canonical / Open Graph / sitemap URL도 원하는 도메인으로 빌드할 수 있습니다.
+GitHub Pages Settings에서 custom domain을 설정한 뒤 필요하면 `CNAME`을 추가하세요. `SITE_URL` 환경 변수를 사용하면 canonical / Open Graph / sitemap URL도 원하는 도메인으로 빌드할 수 있습니다.
 
 ## License
 
-프로젝트 코드는 `LICENSE`를 확인하세요. 참고 오픈소스에 대한 설명은 `ATTRIBUTION.md`에 있습니다.
+프로젝트 코드는 `LICENSE`를 확인하세요. 참고 오픈소스는 `ATTRIBUTION.md`에 정리했습니다.
+
+## v6 — Simple First UI
+
+기본 화면에서는 모든 기능을 한꺼번에 보여주지 않습니다. 처음에는 다음 네 가지 시작 방식만 표시됩니다.
+
+1. **설명만으로 만들기** — 원하는 장면을 자연어로 설명하고 로컬 자동설계 또는 외부 AI용 제작 지시서를 생성합니다.
+2. **대본 · SRT로 만들기** — 대본/SRT만 넣고 장면을 자동 구성합니다.
+3. **이미지 · SVG · HTML로 만들기** — 기존 시각 자료를 장면으로 가져옵니다.
+4. **기존 프로젝트 열기** — 프로젝트 폴더/JSON으로 이어서 작업합니다.
+
+선택한 방식에 필요한 입력만 표시되며, Blueprint/API/SRT/Studio의 세부 탭은 **고급 편집**을 열었을 때만 보입니다.
+
+### 외부 AI 사용
+
+`설명만으로 만들기 → 외부 AI에서 만들기`를 선택하면 앱이 현재 장면 설명과 제작 방식에 맞는 **완성형 Blueprint JSON 요청 프롬프트**를 자동 작성합니다. ChatGPT, Gemini, Claude, Grok에 그대로 복사한 뒤 결과 JSON/SVG/HTML을 다시 붙여넣으면 앱이 검증하여 미리보기로 연결합니다.

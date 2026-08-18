@@ -1,0 +1,61 @@
+{
+  "format": "whiteboard-blueprint/v1",
+  "title": "AI 화이트보드 제작 3단계",
+  "canvas": { "width": 1280, "height": 720 },
+  "style": {
+    "paper": "#F5EBD7",
+    "ink": "#383A36",
+    "accent": "#FFA500",
+    "allowText": false
+  },
+  "scenes": [
+    {
+      "id": "scene-01",
+      "title": "입력에서 설계 만들기",
+      "narration": "대본이나 기존 자막을 넣으면 먼저 장면의 의미와 구조를 설계합니다.",
+      "durationMs": 6500,
+      "visualMode": "whiteboard",
+      "layout": "left-right",
+      "animation": { "preset": "ink-color-gaze", "inkPath": "grid", "colorFill": "contour-wipe", "pause": "heavy" },
+      "transition": { "type": "cut", "durationMs": 0 },
+      "objects": [
+        { "id": "source", "type": "box", "x": 120, "y": 210, "w": 310, "h": 260, "text": "", "drawOrder": 1 },
+        { "id": "flow", "type": "arrow", "x": 485, "y": 300, "w": 260, "h": 70, "text": "", "drawOrder": 2 },
+        { "id": "blueprint", "type": "box", "x": 805, "y": 180, "w": 350, "h": 320, "text": "", "drawOrder": 3 }
+      ]
+    },
+    {
+      "id": "scene-02",
+      "title": "SVG와 HTML 컴파일",
+      "narration": "같은 설계 데이터에서 SVG 화면과 HTML composition을 동시에 생성하고 필요한 애니메이션 방식을 선택합니다.",
+      "durationMs": 7500,
+      "visualMode": "diagram",
+      "layout": "steps",
+      "animation": { "preset": "mask-wipe" },
+      "transition": { "type": "fade", "durationMs": 500 },
+      "objects": [
+        { "id": "blueprint", "type": "box", "x": 90, "y": 250, "w": 280, "h": 180, "text": "", "drawOrder": 1 },
+        { "id": "svg", "type": "box", "x": 500, "y": 160, "w": 280, "h": 180, "text": "", "drawOrder": 2 },
+        { "id": "html", "type": "box", "x": 900, "y": 340, "w": 280, "h": 180, "text": "", "drawOrder": 3 },
+        { "id": "path", "type": "arrow", "x": 320, "y": 310, "w": 650, "h": 70, "text": "", "drawOrder": 4 }
+      ]
+    },
+    {
+      "id": "scene-03",
+      "title": "SRT와 결과물 파생",
+      "narration": "마지막으로 장면의 내레이션과 길이에서 SRT를 만들고 프로젝트 JSON, SVG, HTML, GIF, WebM과 HyperFrames 결과로 내보냅니다.",
+      "durationMs": 7000,
+      "visualMode": "mixed",
+      "layout": "radial",
+      "animation": { "preset": "ink-color-gaze", "inkPath": "skeleton", "colorFill": "brush", "pause": "auto" },
+      "transition": { "type": "wipe", "durationMs": 500 },
+      "objects": [
+        { "id": "core", "type": "circle", "x": 500, "y": 235, "w": 280, "h": 280, "text": "", "drawOrder": 1 },
+        { "id": "srt", "type": "circle", "x": 140, "y": 120, "w": 130, "h": 130, "text": "", "drawOrder": 2 },
+        { "id": "svg", "type": "circle", "x": 1010, "y": 120, "w": 130, "h": 130, "text": "", "drawOrder": 3 },
+        { "id": "video", "type": "circle", "x": 145, "y": 500, "w": 130, "h": 130, "text": "", "drawOrder": 4 },
+        { "id": "hf", "type": "circle", "x": 1010, "y": 500, "w": 130, "h": 130, "text": "", "drawOrder": 5 }
+      ]
+    }
+  ]
+}

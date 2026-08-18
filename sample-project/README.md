@@ -4,7 +4,8 @@
 
 ```text
 sample-project/
-├─ project.json        # SRT 구간 ↔ 장면 이미지 ↔ 애니메이션 영역 연결
+├─ blueprint.json      # v5 권장: 장면 설계의 단일 기준
+├─ project.json        # v4 호환: SRT 구간 ↔ 장면 이미지 ↔ 애니메이션 영역 연결
 ├─ story.srt           # 전체 자막
 ├─ script.txt          # 원본 대본(선택)
 └─ images/
@@ -33,3 +34,8 @@ sample-project/
 5. 연결표에서 장면 1·2·3 이미지가 올바른지 확인하고 재생합니다.
 
 `project.json` 없이도 불러올 수 있습니다. 이 경우 앱이 SRT를 장면으로 나눈 뒤 `scene-01.*`, `scene-02.*` 같은 파일명을 자동 연결합니다.
+
+
+## v5 권장 흐름
+
+새 프로젝트는 `blueprint.json`을 먼저 보고 시작하는 것을 권장합니다. Blueprint에서 SVG/HTML/Studio 데이터를 만들고, SRT는 `narration + durationMs`를 이용해 파생할 수 있습니다. 기존 `project.json + story.srt + images/` 방식도 호환을 위해 유지됩니다.
